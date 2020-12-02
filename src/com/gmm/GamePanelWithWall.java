@@ -11,10 +11,10 @@ import java.awt.event.KeyEvent;
 import java.util.concurrent.TimeUnit;
 //import java.util.Timer; // 应该是swing的timer
 
-public class GamePanel extends JPanel implements ActionListener {
+public class GamePanelWithWall extends JPanel implements ActionListener {
 
-    static final int SCREEN_WIDTH = 800;
-    static final int SCREEN_HEIGHT = 800;
+    static final int SCREEN_WIDTH = 1080;
+    static final int SCREEN_HEIGHT = (int)(SCREEN_WIDTH *(1.0*5/9));
     static final int UNIT_SIZE = 40;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT)/UNIT_SIZE;
     static final int DELAY = 100;
@@ -28,10 +28,17 @@ public class GamePanel extends JPanel implements ActionListener {
     boolean running = false;
     Timer timer;
     Random random;
-    static final int UNIT_NUM = SCREEN_HEIGHT/UNIT_SIZE;
+    static final int UNIT_NUM1 = SCREEN_HEIGHT/UNIT_SIZE;
+    static final int UNIT_NUM2 = SCREEN_WIDTH/UNIT_SIZE;
+    JButton button3;
 
-    GamePanel(){
+    GamePanelWithWall(){
         //初始化
+        button3 = new JButton("返回主界面 v");
+        this.add(button3);
+        button3.setVisible(false);
+
+
         random = new Random();
         Dimension DIM = new Dimension(SCREEN_WIDTH,SCREEN_HEIGHT);
         this.setPreferredSize(DIM);
@@ -40,8 +47,10 @@ public class GamePanel extends JPanel implements ActionListener {
         MykeyAdapter keyAdapter = new MykeyAdapter();
         this.addKeyListener(keyAdapter);
 
-        startGame();
+//        startGame();
     }
+
+
     public void startGame(){
         newApple();
         running = true;
@@ -57,10 +66,12 @@ public class GamePanel extends JPanel implements ActionListener {
     public void draw(Graphics g){
         if(running) {
             //高度除以单元个数，就得到了结果
-            for (int i = 0; i < UNIT_NUM; i++) {
-                g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
+            for (int i = 0; i < UNIT_NUM1; i++) {
                 g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
                 //这里画线，画出单元格。
+            }
+            for (int i = 0; i<UNIT_NUM2;i++){
+                g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
             }
             g.setColor(Color.red);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
@@ -81,7 +92,7 @@ public class GamePanel extends JPanel implements ActionListener {
             Font myfont = new Font("Ink Free",Font.BOLD, 40);
             g.setFont(myfont);
             FontMetrics metrics = getFontMetrics(g.getFont());
-            g.drawString("Score:"+appleEaten,(SCREEN_WIDTH-metrics.stringWidth("Score:"+appleEaten))/2,g.getFont().getSize());
+            g.drawString("Your score: "+appleEaten,(SCREEN_WIDTH-metrics.stringWidth("Your score: "+appleEaten))/2,g.getFont().getSize());
         }
         else{
             gameOver(g);
@@ -89,8 +100,8 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void newApple(){
-        appleX = random.nextInt((int)UNIT_NUM)*UNIT_SIZE;
-        appleY = random.nextInt((int)UNIT_NUM)*UNIT_SIZE;
+        appleX = random.nextInt((int) UNIT_NUM1)*UNIT_SIZE;
+        appleY = random.nextInt((int) UNIT_NUM1)*UNIT_SIZE;
         boolean flag = true;
         while(flag){
             flag = false;
@@ -99,8 +110,8 @@ public class GamePanel extends JPanel implements ActionListener {
                     flag = true;
                 }
             }
-            appleX = random.nextInt((int)UNIT_NUM)*UNIT_SIZE;
-            appleY = random.nextInt((int)UNIT_NUM)*UNIT_SIZE;
+            appleX = random.nextInt((int) UNIT_NUM1)*UNIT_SIZE;
+            appleY = random.nextInt((int) UNIT_NUM1)*UNIT_SIZE;
         }
 
     }
@@ -162,13 +173,16 @@ public class GamePanel extends JPanel implements ActionListener {
         Font myfont01 = new Font("Ink Free",Font.BOLD, 75);
         g.setFont(myfont01);
         FontMetrics metrics01 = getFontMetrics(g.getFont());
-        g.drawString("Game Over",(SCREEN_WIDTH-metrics01.stringWidth("Game Over"))/2,SCREEN_HEIGHT/2);
+        g.drawString("Game Over!!",(SCREEN_WIDTH-metrics01.stringWidth("Game Over!!"))/2,SCREEN_HEIGHT/2);
 
         g.setColor(Color.red);
         Font myfont02 = new Font("Ink Free",Font.BOLD, 40);
         g.setFont(myfont02);
         FontMetrics metrics02 = getFontMetrics(g.getFont());
-        g.drawString("Score:"+appleEaten,(SCREEN_WIDTH-metrics02.stringWidth("Score:"+appleEaten))/2,g.getFont().getSize());
+        g.drawString("The final score is: "+appleEaten,(SCREEN_WIDTH-metrics02.stringWidth("The final score is: "+appleEaten))/2,g.getFont().getSize());
+
+        button3.setVisible(true);
+        this.validate();
 
     }
     @Override//这是自动添加的
