@@ -13,7 +13,6 @@ public class GameFrame extends JFrame {
     JPanel panel = null;
 
     GameFrame(){
-
         JPanel windows = new JPanel();
 
         GamePanelWithWall panelWithWall = new GamePanelWithWall();
@@ -68,6 +67,7 @@ public class GameFrame extends JFrame {
                 card.show(panel,"PongGame");
                 panelPongGame.setFocusable(true);
                 panelPongGame.requestFocus();
+                panelPongGame.gameThread.start();
             }
         });
 
@@ -81,6 +81,14 @@ public class GameFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 panelWithoutWall.timer.stop();
+                card.show(panel,"01");
+            }
+        });
+        panelPongGame.button3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+//                panelPongGame.gameThread.interrupt();
+                panelPongGame.start();
                 card.show(panel,"01");
             }
         });
