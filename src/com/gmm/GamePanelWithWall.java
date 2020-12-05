@@ -20,7 +20,7 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
     static final int DELAY = 100;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
-    int bodyParts = 3; //贪吃蛇初始6个块
+    int bodyParts = 3; //贪吃蛇初始3个块
     int appleEaten;
     int appleX;
     int appleY;
