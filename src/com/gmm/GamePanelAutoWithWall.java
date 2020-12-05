@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.util.concurrent.TimeUnit;
 //import java.util.Timer; // 应该是swing的timer
 
-public class GamePanelWithWall extends JPanel implements ActionListener {
+public class GamePanelAutoWithWall extends JPanel implements ActionListener {
 
     static final int SCREEN_WIDTH = 1080;
     static final int SCREEN_HEIGHT = (int)(SCREEN_WIDTH *(1.0*5/9));
@@ -34,7 +34,7 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
     Color appleColor;
     Color appleLastColor;
 
-    GamePanelWithWall(){
+    GamePanelAutoWithWall(){
         //初始化
         button3 = new JButton("返回主界面 v");
         this.add(button3);
@@ -76,23 +76,19 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
         if(running) {
             //高度除以单元个数，就得到了结果
             for (int i = 0; i < UNIT_NUM1; i++) {
-                g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
-                //这里画线，画出单元格。
+                g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);//这里画线，画出单元格。
             }
             for (int i = 0; i<UNIT_NUM2;i++){
                 g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
             }
             g.setColor(appleColor);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
-            //打印蛇的身子
-            for (int i = 0; i < bodyParts; i++) {
+            for (int i = 0; i < bodyParts; i++) {            //打印蛇的身子
                 if (i == 0) {
                     g.setColor(Color.green);
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 } else {
-//                    g.setColor(new Color(45, 180, 0));
                     g.setColor(appleLastColor);
-//                    g.setColor(new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255)));
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
@@ -163,9 +159,9 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
     }
     public void checkApple(){
         if((appleX == x[0]) && (appleY == y[0])){
-                bodyParts++;
-                appleEaten++;
-                newApple();
+            bodyParts++;
+            appleEaten++;
+            newApple();
         }
     }
     public void checkCollisions(){
@@ -218,7 +214,7 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
         }
         repaint();
     }
-    public class MykeyAdapter extends KeyAdapter{
+    public class MykeyAdapter extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
             super.keyPressed(e);
@@ -260,3 +256,4 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
         }
     }
 }
+

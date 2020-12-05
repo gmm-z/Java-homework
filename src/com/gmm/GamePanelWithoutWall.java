@@ -40,7 +40,7 @@ public class GamePanelWithoutWall extends JPanel implements ActionListener {
         this.add(button3);
         button3.setVisible(false);
 
-        appleLastColor = new Color(45, 180, 100);
+        appleColor = new Color(45, 180, 100);
 
         random = new Random();
         Dimension DIM = new Dimension(SCREEN_WIDTH,SCREEN_HEIGHT);
@@ -52,6 +52,7 @@ public class GamePanelWithoutWall extends JPanel implements ActionListener {
 //        startGame();
     }
     public void startGame(){
+        appleColor = new Color(45, 180, 100);
         newApple();
         appleLastColor = new Color(45, 180, 100);
         this.appleEaten = 0;
@@ -113,11 +114,24 @@ public class GamePanelWithoutWall extends JPanel implements ActionListener {
     }
 
     public void newApple(){
+        boolean flag = true;
         appleLastColor = appleColor;
-        appleColor = new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255));
+        appleColor = new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+        while (flag) {
+            flag = false;
+            if (appleColor.getRed()+appleColor.getBlue()+appleColor.getGreen() < 100){
+                appleColor = new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255));
+                flag = true;
+            }
+            if (Math.abs(appleColor.getRed() - appleLastColor.getRed())< 50 && Math.abs(appleColor.getBlue() - appleLastColor.getBlue()) < 50 && Math.abs(appleColor.getGreen()- appleLastColor.getGreen())<50  ){
+                appleColor = new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255));
+                flag = true;
+            }
+            System.out.println("苹果的RGB为:"+"R:"+appleColor.getRed()+" G:" + appleColor.getGreen() + " B:" + appleColor.getBlue());
+        }
         appleX = random.nextInt((int) UNIT_NUM2)*UNIT_SIZE;
         appleY = random.nextInt((int) UNIT_NUM1)*UNIT_SIZE;
-        boolean flag = true;
+        flag = true;
         while(flag){
             flag = false;
             for (int i = 0;i<bodyParts;i++){
@@ -137,7 +151,6 @@ public class GamePanelWithoutWall extends JPanel implements ActionListener {
             x[i] = x[i-1];
             y[i] = y[i-1];
         }
-
         switch (direction){
             case 'U':
                 y[0] = y[0] - UNIT_SIZE;
