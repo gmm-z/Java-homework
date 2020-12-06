@@ -40,6 +40,8 @@ public class GameFrame extends JFrame {
         panel.add(panelPongGame,"PongGame");
         panel.add(panelAutoWithWall,"autoWithWall");
 
+        JButton t = new JButton("hhh");
+
         panel.add(windows,"01");
         card.show(panel,"01");
         this.add(panel);

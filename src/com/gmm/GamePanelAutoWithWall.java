@@ -1,5 +1,7 @@
 package com.gmm;
 
+import com.sun.deploy.security.MSCryptoDSASignature;
+
 import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
@@ -15,7 +17,7 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = (int) (SCREEN_WIDTH * (1.0 * 5 / 9));
     static final int UNIT_SIZE = 40;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
-    static final int DELAY = 100;
+    static final int DELAY = 1;//100
     final int x[] = new int[GAME_UNITS];
     final int lastx[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
@@ -35,11 +37,12 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
     JButton button3;
     Color appleColor;
     Color appleLastColor;
-    char []someDirections = new char[]{'R','U','D','L'};
+    char []someDirections = new char[]{'L','R','U','D'};
     final int virtualX[] = new int[GAME_UNITS];
     final int virtualY[] = new int[GAME_UNITS];
     int[][] visit= new int[UNIT_X + 10][UNIT_X + 10];
     int[][] VirtualVisit= new int[UNIT_X + 10][UNIT_X + 10];
+    char [][]LastDirection = new char[GAME_UNITS][GAME_UNITS];
     int step;
 
     GamePanelAutoWithWall() {
@@ -87,6 +90,66 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
         draw(g);
     }
 
+    public void clearVirtualVisitAndStep(){
+        for (int i = 0 ; i < UNIT_X ;i++){
+            for (int j = 0; j< UNIT_Y ;j++){
+                VirtualVisit[i][j] = 0;
+            }
+        }
+        step = 0;
+        for (int i = 0 ; i < UNIT_X ;i++){
+            for (int j = 0; j< UNIT_Y ;j++){
+                Virtualmatrix[i][j] = -1;
+            }
+        }
+        for (int i = 1 ; i< bodyParts;i++){
+            VirtualVisit[virtualX[i]/UNIT_SIZE][virtualY[i]/UNIT_SIZE] = 1;
+        }
+    }
+    public void getVirtualMatrix(int x, int y){
+        if (x < 0 || x >= UNIT_X || y < 0 || y >= UNIT_Y){
+            return;
+        }
+        VirtualVisit[x][y] = 1;
+        boolean flag = true;
+        Virtualmatrix[x][y] = step;
+        //左边
+        Queue<xy> queue = new LinkedList<xy>();
+        xy temp = new xy(x,y,step);
+        queue.offer(temp);
+        while(!queue.isEmpty()){
+            temp = queue.poll();
+            int xx = temp.x;
+            int yy = temp.y;
+            step = temp.step;
+            if ( xx - 1 >= 0 && VirtualVisit[xx-1][yy] == 0){
+                xy t = new xy(xx-1,yy,step+1);
+                queue.offer(t);
+                Virtualmatrix[xx-1][yy] = step+1;
+                VirtualVisit[xx-1][yy] = 1;
+            }
+            if (xx + 1 < UNIT_X && VirtualVisit[xx+1][yy] == 0){
+                xy t = new xy(xx+1,yy,step+1);
+                queue.offer(t);
+                VirtualVisit[xx+1][yy] = 1;
+                Virtualmatrix[xx+1][yy] = step+1;
+            }
+            if (yy+1 < UNIT_Y && VirtualVisit[xx][yy+1] == 0 ){
+                xy t = new xy(xx,yy+1,step+1);
+                queue.offer(t);
+                VirtualVisit[xx][yy+1] = 1;
+                Virtualmatrix[xx][yy+1] = step+1;
+            }
+            if (yy-1 >= 0 && VirtualVisit[xx][yy-1] ==0){
+                xy t = new xy(xx,yy-1,step+1);
+                queue.offer(t);
+                VirtualVisit[xx][yy-1] = 1;
+                Virtualmatrix[xx][yy-1] = step+1;
+            }
+        }
+        return;
+    }
+
     public void draw(Graphics g) {
         if (running) {
             //高度除以单元个数，就得到了结果
@@ -115,7 +178,7 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
             Font myfont = new Font("Ink Free", Font.BOLD, 40);
             g.setFont(myfont);
             FontMetrics metrics = getFontMetrics(g.getFont());
-            g.drawString("Your score: " + appleEaten, (SCREEN_WIDTH - metrics.stringWidth("Your score: " + appleEaten)) / 2, g.getFont().getSize());
+            g.drawString("Your score: " + appleEaten, (SCREEN_WIDTH - metrics.stringWidth("Your score: " + appleEaten)) / 2, g.getFont().getSize()+30);
         } else {
             for (int i = 0; i < UNIT_Y; i++) {
                 g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);//这里画线，画出单元格。
@@ -297,10 +360,11 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
         Font myfont02 = new Font("Ink Free", Font.BOLD, 40);
         g.setFont(myfont02);
         FontMetrics metrics02 = getFontMetrics(g.getFont());
-        g.drawString("The final score is: " + appleEaten, (SCREEN_WIDTH - metrics02.stringWidth("The final score is: " + appleEaten)) / 2, g.getFont().getSize());
+        g.drawString("The final score is: " + appleEaten, (SCREEN_WIDTH - metrics02.stringWidth("The final score is: " + appleEaten)) / 2, g.getFont().getSize()+30);
 
         button3.setVisible(true);
         this.validate();
+        System.out.println("能力不足，我的贪吃蛇失败了");
     }
     public void clearVisitAndStep(){
         for (int i = 0 ; i < UNIT_X ;i++){
@@ -372,74 +436,44 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
 
         return;
     }
-
-    public void clearVirtualVisitAndStep(){
-        for (int i = 0 ; i < UNIT_X ;i++){
-            for (int j = 0; j< UNIT_Y ;j++){
-                VirtualVisit[i][j] = 0;
+    public boolean findTail() {
+        int xx = (x[bodyParts - 1]) / UNIT_SIZE;
+        int yy = (y[bodyParts - 1]) / UNIT_SIZE;
+        int sum = 0;
+        boolean flag = false;
+        if (xx - 1 >= 0) {
+            if (Virtualmatrix[xx - 1][yy] != -1) {
+                flag = true;
             }
         }
-        step = 0;
-        for (int i = 0 ; i < UNIT_X ;i++){
-            for (int j = 0; j< UNIT_Y ;j++){
-                Virtualmatrix[i][j] = -1;
+        if(xx+1 < UNIT_X){
+            if (Virtualmatrix[xx+1][yy] != -1){
+                flag = true;
             }
         }
-        for (int i = 1 ; i< bodyParts;i++){
-            VirtualVisit[virtualX[i]/UNIT_SIZE][virtualY[i]/UNIT_SIZE] = 1;
+        if (yy - 1 >= 0){
+            if (Virtualmatrix[xx][yy-1] != -1){
+                flag = true;
+            }
         }
+        if (yy+1 < UNIT_Y){
+            if (Virtualmatrix[xx][yy+1] != -1){
+                flag = true;
+            }
+        }
+        return  flag;
     }
-    public void getVirtualMatrix(int x, int y){
-        if (x < 0 || x >= UNIT_X || y < 0 || y >= UNIT_Y){
-            return;
-        }
-        VirtualVisit[x][y] = 1;
-        boolean flag = true;
-        Virtualmatrix[x][y] = step;
-        //左边
-        Queue<xy> queue = new LinkedList<xy>();
-        xy temp = new xy(x,y,step);
-        queue.offer(temp);
-        while(!queue.isEmpty()){
-            temp = queue.poll();
-            int xx = temp.x;
-            int yy = temp.y;
-            step = temp.step;
-            if ( xx - 1 >= 0 && VirtualVisit[xx-1][yy] == 0){
-                xy t = new xy(xx-1,yy,step+1);
-                queue.offer(t);
-                Virtualmatrix[xx-1][yy] = step+1;
-                VirtualVisit[xx-1][yy] = 1;
-            }
-            if (xx + 1 < UNIT_X && VirtualVisit[xx+1][yy] == 0){
-                xy t = new xy(xx+1,yy,step+1);
-                queue.offer(t);
-                VirtualVisit[xx+1][yy] = 1;
-                Virtualmatrix[xx+1][yy] = step+1;
-            }
-            if (yy+1 < UNIT_Y && VirtualVisit[xx][yy+1] == 0 ){
-                xy t = new xy(xx,yy+1,step+1);
-                queue.offer(t);
-                VirtualVisit[xx][yy+1] = 1;
-                Virtualmatrix[xx][yy+1] = step+1;
-            }
-            if (yy-1 >= 0 && VirtualVisit[xx][yy-1] ==0){
-                xy t = new xy(xx,yy-1,step+1);
-                queue.offer(t);
-                VirtualVisit[xx][yy-1] = 1;
-                Virtualmatrix[xx][yy-1] = step+1;
-            }
-        }
-        return;
-    }
-
     @Override//这是自动添加的
     public void actionPerformed(ActionEvent e) {
         if (running == true) {
             clearVisitAndStep();
             getMatrix(x[0]/UNIT_SIZE,y[0]/UNIT_SIZE);
+
             if (matrix[appleX/UNIT_SIZE][appleY/UNIT_SIZE] > 0){
-                int maxi = 0;
+                int maxi = -1;
+                int mini = -1;
+                int be = -1;
+                int ci = -1;
                 int distance = matrix[appleX/UNIT_SIZE][appleY/UNIT_SIZE];
                 for (int i = 0; i < 4;i++){
                     direction = someDirections[i];
@@ -449,43 +483,90 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
                         clearVirtualVisitAndStep();
                         getVirtualMatrix(virtualX[0]/UNIT_SIZE,virtualY[0]/UNIT_SIZE);
                         if (Virtualmatrix[appleX/UNIT_SIZE][appleY/UNIT_SIZE] == -1){
-                            if (matrix[virtualX[bodyParts-1]/UNIT_SIZE][virtualY[bodyParts-1]/UNIT_SIZE] == -1 ){
-
-                            }else{
+                            System.out.println("进入第一个");
+                            if (findTail()){
                                 maxi = i;
+                                System.out.println("findtail true");
+                            }else{
+                                ci = i;
                             }
-                        }else if (Virtualmatrix[appleX/UNIT_SIZE][appleY/UNIT_SIZE] < distance){
-                            distance = Virtualmatrix[appleX/UNIT_SIZE][appleY/UNIT_SIZE];
-                            maxi = i;
+                        }else if (Virtualmatrix[appleX/UNIT_SIZE][appleY/UNIT_SIZE] <= distance){
+                            System.out.println("进入第二个");;
+                            if (findTail()  ) {
+                                if ( someDirections[i]!=LastDirection[x[0]/UNIT_SIZE][y[0]/UNIT_SIZE]) {
+                                    distance = Virtualmatrix[appleX / UNIT_SIZE][appleY / UNIT_SIZE];
+                                    maxi = i;
+                                    System.out.println("distance true");
+                                }else{
+                                    mini = i;
+                                }
+                            }else{
+                                System.out.println("没有找到尾巴");
+                                System.out.println("尾巴坐标 x:"+(x[bodyParts-1])/UNIT_SIZE+" y:"+(y[bodyParts-1])/UNIT_SIZE );
+                                be = i;
+                            }
                         }
                     }
                 }
+                if (maxi == -1){
+                    maxi = mini;
+                }
+                if (maxi == -1){
+                    maxi = be;
+                }
+                if (maxi == -1){
+                    maxi = ci;
+                }
+                System.out.println("尾巴坐标 x:"+(x[bodyParts-1])/UNIT_SIZE+" y:"+(y[bodyParts-1])/UNIT_SIZE );
                 System.out.println("苹果坐标"+" x:"+appleX/UNIT_SIZE + " y:"+appleY/UNIT_SIZE);
                 System.out.println("头坐标"+" x:" + x[0]/UNIT_SIZE + " y:" + y[0]/UNIT_SIZE);
                 System.out.println(maxi+"\n");
-
-
                 direction = someDirections[maxi];
+                System.out.println("进入是");
             }else{
-                int index= random.nextInt(4);
-                direction = someDirections[index];
-                boolean flag = true;
-                int number = 0;
-                while(flag){
-                    number++;
-                    flag = false;
+                System.out.println("进入否");
+                int maxi = -1;
+                int mini = -1;
+                for(int i = 0; i < 4;i++){
+                    direction = someDirections[i];
                     virtualReset();
                     virtualMove();
-                    if (virtualCheckCollisions()){
-                        index= random.nextInt(4);
-                        direction = someDirections[index];
-                        flag = true;
-                    }
-                    if (number>100){
-                        break;
+                    if (virtualCheckCollisions()==false){
+                        clearVirtualVisitAndStep();
+                        getVirtualMatrix(virtualX[0]/UNIT_SIZE,virtualY[0]/UNIT_SIZE);
+                        if (findTail()){
+                            maxi = i;
+                        }else {
+                            mini = i;
+                        }
                     }
                 }
+                if (maxi != -1){
+                    direction = someDirections[maxi];
+                }else if(mini!=-1){
+                    direction = someDirections[mini];
+                }else{
+                    direction = 'R';
+                }
             }
+            int index;
+            boolean flag = true;
+            int number = 0;
+            while(flag){
+                number++;
+                flag = false;
+                virtualReset();
+                virtualMove();
+                if (virtualCheckCollisions()){
+                    index= random.nextInt(4);
+                    direction = someDirections[index];
+                    flag = true;
+                }
+                if (number>200){
+                    break;
+                }
+            }
+            LastDirection[x[0]/UNIT_SIZE][y[0]/UNIT_SIZE] = direction;
             move();
             checkApple();
             checkCollisions();

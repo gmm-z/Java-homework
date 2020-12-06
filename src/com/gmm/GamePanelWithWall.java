@@ -100,7 +100,7 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
             Font myfont = new Font("Ink Free",Font.BOLD, 40);
             g.setFont(myfont);
             FontMetrics metrics = getFontMetrics(g.getFont());
-            g.drawString("Your score: "+appleEaten,(SCREEN_WIDTH-metrics.stringWidth("Your score: "+appleEaten))/2,g.getFont().getSize());
+            g.drawString("Your score: "+appleEaten,(SCREEN_WIDTH-metrics.stringWidth("Your score: "+appleEaten))/2,g.getFont().getSize()+30);
         }
         else{
             timer.stop();
@@ -204,7 +204,7 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
         Font myfont02 = new Font("Ink Free",Font.BOLD, 40);
         g.setFont(myfont02);
         FontMetrics metrics02 = getFontMetrics(g.getFont());
-        g.drawString("The final score is: "+appleEaten,(SCREEN_WIDTH-metrics02.stringWidth("The final score is: "+appleEaten))/2,g.getFont().getSize());
+        g.drawString("The final score is: "+appleEaten,(SCREEN_WIDTH-metrics02.stringWidth("The final score is: "+appleEaten))/2,g.getFont().getSize()+30);
 
         button3.setVisible(true);
         this.validate();
