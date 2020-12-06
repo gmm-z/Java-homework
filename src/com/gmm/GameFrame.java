@@ -12,7 +12,8 @@ public class GameFrame extends JFrame {
     CardLayout card = null;
     JPanel panel = null;
     JButton button4 = null;
-
+    JButton button5 = null;
+    JButton button6 = null;
     GameFrame(){
         JPanel windows = new JPanel();
 
@@ -20,11 +21,15 @@ public class GameFrame extends JFrame {
         GamePanelWithoutWall panelWithoutWall = new GamePanelWithoutWall();
         GamePanelPongGame panelPongGame = new GamePanelPongGame();
         GamePanelAutoWithWall panelAutoWithWall = new GamePanelAutoWithWall();
+        GamePanelMaze panelMaze = new GamePanelMaze();
+        GamePanelAutoMaze panelAutoMaze = new GamePanelAutoMaze();
 
-        button1 = new JButton("贪吃蛇有边界");
-        button2 = new JButton("贪吃蛇没有边界");
+        button1 = new JButton("有边界的贪吃蛇游戏");
+        button2 = new JButton("没有边界的贪吃蛇游戏");
         button3 = new JButton("弹球游戏");
-        button4 = new JButton("自动贪吃蛇");
+        button4 = new JButton("自动寻食物的贪吃蛇游戏");
+        button5 = new JButton("迷宫");
+        button6 = new JButton("自走迷宫");
 
         card= new CardLayout();
         panel = new JPanel();
@@ -34,17 +39,67 @@ public class GameFrame extends JFrame {
         windows.add(button2);
         windows.add(button3);
         windows.add(button4);
+        windows.add(button5);
+        windows.add(button6);
 
         panel.add(panelWithWall,"wall");
         panel.add(panelWithoutWall,"withoutWall");
         panel.add(panelPongGame,"PongGame");
         panel.add(panelAutoWithWall,"autoWithWall");
-
-        JButton t = new JButton("hhh");
+        panel.add(panelMaze,"maze");
+        panel.add(panelAutoMaze,"autoMaze");
 
         panel.add(windows,"01");
         card.show(panel,"01");
         this.add(panel);
+        button6.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                card.show(panel,"autoMaze");
+                panelAutoMaze.setFocusable(true);
+                panelAutoMaze.requestFocus();
+                panelAutoMaze.startGame();
+            }
+        });
+        panelAutoMaze.button4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                panelAutoMaze.timer.stop();
+                panelAutoMaze.startGame();
+                panelAutoMaze.setFocusable(true);
+                panelAutoMaze.requestFocus();
+            }
+        });
+        panelMaze.button4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                panelMaze.startGame();
+                panelMaze.setFocusable(true);
+                panelMaze.requestFocus();
+            }
+        });
+        button5.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                card.show(panel,"maze");
+                panelMaze.setFocusable(true);
+                panelMaze.requestFocus();
+                panelMaze.startGame();
+            }
+        });
+        panelAutoMaze.button3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                card.show(panel,"01");
+                panelAutoMaze.timer.stop();
+            }
+        });
+        panelMaze.button3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                card.show(panel,"01");
+            }
+        });
         button4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

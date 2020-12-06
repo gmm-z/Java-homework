@@ -36,7 +36,7 @@ public class GamePanelWithWall extends JPanel implements ActionListener {
 
     GamePanelWithWall(){
         //初始化
-        button3 = new JButton("返回主界面 v");
+        button3 = new JButton("返回主界面");
         this.add(button3);
         button3.setVisible(false);
         appleColor = new Color(45,180,100);
