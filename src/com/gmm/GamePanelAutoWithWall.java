@@ -17,7 +17,7 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = (int) (SCREEN_WIDTH * (1.0 * 5 / 9));
     static final int UNIT_SIZE = 40;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
-    static final int DELAY = 1;//100
+    static final int DELAY = 100;//100
     final int x[] = new int[GAME_UNITS];
     final int lastx[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
@@ -222,8 +222,8 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
             }
             System.out.println("苹果的RGB为:" + "R:" + appleColor.getRed() + " G:" + appleColor.getGreen() + " B:" + appleColor.getBlue());
         }
-        appleX = random.nextInt((int) UNIT_Y) * UNIT_SIZE;
-        appleY = random.nextInt((int) UNIT_Y) * UNIT_SIZE;
+        appleX = (random.nextInt((int) UNIT_Y-2)+1) * UNIT_SIZE;
+        appleY = (random.nextInt((int) UNIT_Y-2) +1)* UNIT_SIZE;
         flag = true;
         while (flag) {
             flag = false;
@@ -233,8 +233,8 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
                 }
             }
             if (flag == true) {
-                appleX = random.nextInt((int) UNIT_Y) * UNIT_SIZE;
-                appleY = random.nextInt((int) UNIT_Y) * UNIT_SIZE;
+                appleX = (random.nextInt((int) UNIT_Y -2)+1) * UNIT_SIZE;
+                appleY = (random.nextInt((int) UNIT_Y-2) +1)* UNIT_SIZE;
             }
         }
     }
@@ -520,11 +520,11 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
                 System.out.println("尾巴坐标 x:"+(x[bodyParts-1])/UNIT_SIZE+" y:"+(y[bodyParts-1])/UNIT_SIZE );
                 System.out.println("苹果坐标"+" x:"+appleX/UNIT_SIZE + " y:"+appleY/UNIT_SIZE);
                 System.out.println("头坐标"+" x:" + x[0]/UNIT_SIZE + " y:" + y[0]/UNIT_SIZE);
-                System.out.println(maxi+"\n");
+                System.out.println("定向移动");
+                System.out.println(someDirections[maxi]+"\n");
                 direction = someDirections[maxi];
-                System.out.println("进入是");
             }else{
-                System.out.println("进入否");
+                System.out.println("随机方向");
                 int maxi = -1;
                 int mini = -1;
                 for(int i = 0; i < 4;i++){
@@ -555,12 +555,31 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
             while(flag){
                 number++;
                 flag = false;
-                virtualReset();
-                virtualMove();
-                if (virtualCheckCollisions()){
-                    index= random.nextInt(4);
-                    direction = someDirections[index];
-                    flag = true;
+                switch (direction){
+                    case 'U':
+                        if (y[0]-UNIT_SIZE == y[1]){
+                            direction = someDirections[random.nextInt(4)];
+                            flag = true;
+                        }
+                        break;
+                    case 'R':
+                        if (x[0]+UNIT_SIZE == x[1]){
+                            direction = someDirections[random.nextInt(4)];
+                            flag = true;
+                        }
+                        break;
+                    case 'L':
+                        if (x[0]-UNIT_SIZE == x[1]){
+                            direction = someDirections[random.nextInt(4)];
+                            flag = true;
+                        }
+                        break;
+                    case 'D':
+                        if (y[0]+UNIT_SIZE == y[1]){
+                            direction = someDirections[random.nextInt(4)];
+                            flag = true;
+                        }
+                        break;
                 }
                 if (number>200){
                     break;
@@ -573,8 +592,5 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
         }
         repaint();
     }
-
-
-
 }
 
