@@ -169,7 +169,6 @@ public class GamePanelPongGame extends JPanel implements Runnable{
                     repaint();
                     delta--;
                 }
-
         }
     }
     //内部类 行为监视器

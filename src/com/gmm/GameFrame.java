@@ -169,7 +169,7 @@ public class GameFrame extends JFrame {
             }
         });
         this.setBackground(Color.BLACK);
-        this.setTitle("学习累了吗，玩点游戏歇一歇吧");
+        this.setTitle("学习工作累了吗，玩点游戏歇一歇吧");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.pack();//自动根据panel自动改变

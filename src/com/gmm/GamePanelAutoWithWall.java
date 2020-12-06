@@ -222,7 +222,7 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
             }
             System.out.println("苹果的RGB为:" + "R:" + appleColor.getRed() + " G:" + appleColor.getGreen() + " B:" + appleColor.getBlue());
         }
-        appleX = (random.nextInt((int) UNIT_Y-2)+1) * UNIT_SIZE;
+        appleX = (random.nextInt((int) UNIT_X-2)+1) * UNIT_SIZE;
         appleY = (random.nextInt((int) UNIT_Y-2) +1)* UNIT_SIZE;
         flag = true;
         while (flag) {
@@ -233,7 +233,7 @@ public class GamePanelAutoWithWall extends JPanel implements ActionListener {
                 }
             }
             if (flag == true) {
-                appleX = (random.nextInt((int) UNIT_Y -2)+1) * UNIT_SIZE;
+                appleX = (random.nextInt((int) UNIT_X -2)+1) * UNIT_SIZE;
                 appleY = (random.nextInt((int) UNIT_Y-2) +1)* UNIT_SIZE;
             }
         }
