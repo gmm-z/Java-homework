@@ -1,6 +1,6 @@
-# Java minigame
+# Java Minigames
 
-These include snakes, mazes and pinball games. Among them, the snakes and mazes can be completed automatically.
+We have created some fantastic games, including _snakes, mazes and pinball games_. Among them, the _snakes and mazes games_ can be completed automatically. 
 
 <img src="https://gitee.com/imingx/picgo/raw/master/picture/20201206174154.png" style="zoom:67%;" />
 
