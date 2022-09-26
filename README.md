@@ -1,4 +1,4 @@
-# Java Minigames
+# Auto Snake && Java Minigames
 
 We have created some fantastic games, including _snakes, mazes and pinball games_. Among them, the _snakes and mazes games_ can be completed automatically. 
 
